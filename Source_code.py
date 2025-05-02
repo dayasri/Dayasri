@@ -6,6 +6,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import classification_report, confusion_matrix
 import joblib
+import plotly.express as px
 
 # Load dataset
 df = pd.read_csv("Churn_Modelling.csv")
@@ -25,7 +26,6 @@ plt.xlabel("Exited")
 plt.ylabel("Count")
 plt.tight_layout()
 plt.savefig("churn_distribution.png")
-plt.close()
 plt.show() 
 
 # Feature Engineering: One-hot encoding
@@ -56,7 +56,23 @@ sns.barplot(x=importances[indices], y=features[indices])
 plt.title("Feature Importances")
 plt.tight_layout()
 plt.savefig("feature_importances.png")
-plt.close()
+plt.show()
+
+#heatmap
+correlation_matrix = df_encoded.corr() 
+plt.figure(figsize=(12, 8)) 
+sns.heatmap(correlation_matrix, annot=True, cmap='coolwarm', fmt=".2f")
+plt.title("Correlation Matrix Heatmap")
+plt.savefig("heatmap_modelling.png")
+plt.show()
+
+#plotly
+fig = px.imshow(correlation_matrix, 
+                x=correlation_matrix.columns, 
+                y=correlation_matrix.columns,
+                color_continuous_scale='RdBu_r',
+                title="Correlation Matrix Heatmap")
+fig.show()
 
 # Save model
 joblib.dump(model, "churn_model.pkl")
@@ -68,3 +84,5 @@ with open("model_report.txt", "w") as f:
     f.write(f"Churn Rate: {churn_rate:.2f}\n\n")
     f.write("Classification Report:\n")
     f.write(report)
+
+print(df)    
